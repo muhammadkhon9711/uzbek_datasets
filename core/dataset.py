@@ -1,6 +1,19 @@
 import os
 import pickle
 
+def __picklepath(file):
+    return f"./datasets/pickle/{file}.pickle"
+
+def load_pickle(filename:str):
+        with open(__picklepath(filename), "rb") as file:
+            data = file.read()
+        raw = pickle.loads(data)
+        return raw
+
+def save_pickle(data, filename:str):
+    raw = pickle.dumps(data)
+    with open(__picklepath(filename), "wb") as file:
+        file.write(raw)
 
 def mkdir(path):
     if not os.path.exists(path):

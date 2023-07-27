@@ -2,10 +2,20 @@ from core import dataset as dt
 import datasets as dts
 
 def huggingface_abstracts():
+    dataset = dts.load_dataset("universeTBD/arxiv-abstracts-large", cache_dir="./datasets/downloaded")
+    data = []
+    for raw in dataset["train"]:
+        data.append(dict2text(cleanup(raw)))
+    dt.save_pickle(data, "abstracts-list")
+
+def huggingface_wikkipedia():
     dataset = dts.load_dataset("wikipedia", "20220301.en", cache_dir="./datasets/downloaded")
-    data = dt.PickleDataSet()
-    data.set(dataset["train"], "en")
-    data.save("wikkipedia")
+    data = []
+    for raw in dataset["train"]:
+        data.append(dict2text(cleanup(raw)))
+    dt.save_pickle(data, "wikkipedia-list")
+
+
 
 def dict2text(data:dict):
     text = ""
@@ -26,7 +36,11 @@ def cleanup(data:dict):
         "versions",
         "update_date",
         "authors_parsed",
-        "url"
+        "url",
+        "journal-ref",
+        "comments",
+        "authors",
+        "submitter"
     ]
 
     for key in uselesskeys:
@@ -39,39 +53,21 @@ def split(file, data:list, step):
     size = len(data)
     c = 0
     start = 0
-    raw = dt.PickleDataSet(language="en") 
     while start + step < size:
-        raw.set(data[start:start+step])
-        raw.save(f"{file}-{c}")
+        raw = data[start:start+step]
+        dt.save_pickle(raw, f"{file}-{c}")
         start += step
         c += 1
-    raw.set(data[start:size])
-    raw.save(f"{file}-{c}")
+    raw = (data[start:size])
+    dt.save_pickle(raw, f"{file}-{c}")
     print(f"{file} split done.")
 
-def proccess(file):
-    print(f"{file}, proccessing ...")
-    dataset = dt.PickleDataSet(language="en")
-    dataset.load(file)
-    rows = []
-    for data in dataset.data():
-        row = dict2text(cleanup(data))
-        rows.append(row)
-    dataset.set(rows, "en")
-    dataset.save(file+"-list")
-    print(f"{file}, done.")
-
-def main():
-    proccess("abstracts-large")
-
 def main_split():
-    dataset = dt.PickleDataSet()
-    dataset.load("abstracts-large-list")
-    print(len(dataset.data()))
-    split("abstracts-100K", dataset.data(), 100000)
+    dataset = dt.load_pickle("abstracts-list")
+    print(len(dataset))
+    split("abstracts-100K", dataset, 100000)
 
-main()
-main_split()
-d = dt.PickleDataSet("abstracts-100K-0", "en")
-for i in range(10):
-    print(d.data()[i])
+#huggingface_abstracts()
+#main_split()
+
+huggingface_wikkipedia()
