@@ -8,6 +8,7 @@ def huggingface_abstracts():
         data.append(dict2text(cleanup(raw)))
     dt.save_pickle(data, "abstracts-list")
 
+
 def huggingface_wikkipedia():
     dataset = dts.load_dataset("wikipedia", "20220301.en", cache_dir="./datasets/downloaded")
     data = []
