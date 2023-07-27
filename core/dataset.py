@@ -4,6 +4,9 @@ import pickle
 def __picklepath(file):
     return f"./datasets/pickle/{file}.pickle"
 
+def __textpath(file):
+    return f"./datasets/text/{file}.txt"
+
 def load_pickle(filename:str):
         with open(__picklepath(filename), "rb") as file:
             data = file.read()
@@ -14,6 +17,18 @@ def save_pickle(data, filename:str):
     raw = pickle.dumps(data)
     with open(__picklepath(filename), "wb") as file:
         file.write(raw)
+
+def load(filename:str):
+        raw = []
+        with open(__textpath(filename), "r", encoding="utf8") as file:
+            for line in file:
+                raw.append(line.strip())
+        return raw
+
+def save(data, filename:str):
+    with open(__textpath(filename), "w", encoding="utf8") as file:
+        for line in data:
+            file.write(line + "\n")
 
 def mkdir(path):
     if not os.path.exists(path):
@@ -60,16 +75,7 @@ class TextDataSet(DataSet):
         if filename is not None:
             self.load(filename)
 
-    def load(self, filename:str):
-        raw = []
-        with open(self._fullpath(filename), "r", encoding="utf8") as file:
-            for line in file:
-                raw.append(line.strip())
-
-    def save(self, filename:str):
-        with open(self._fullpath(filename), "w", encoding="utf8") as file:
-            for line in self.raw:
-                file.write(line + "\n")
+    
 
 
 class PickleDataSet(DataSet):
