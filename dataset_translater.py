@@ -70,7 +70,7 @@ def main():
     pickle_names = [
         "wikipedia-list-1",
         # .....
-        "wikipedia-list-66",
+        #"wikipedia-list-66",
     ]
 
     # !TODO o'zizga moslab oling
